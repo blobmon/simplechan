@@ -1,11 +1,11 @@
-
+## What is Simplechan all about?
 Simplechan is a chan software where you can create a chan similar to notorious 4chan (similar not exactly same). It is designed simply as the name suggests and is designed to not track users and to be very fast. 
 
 Software development shouldn't be something vague and complicated. It is supposed to be fun and simple. The resulting software should never be bloated and slow. It has to be simple and fast. Therefore, functional. So Simplechan is an attempt at keeping the whole thing that way. 
 
 This readme might feel too conversational. But I feel it is a nice approach to write it in this manner. And also, this readme might feel inadequate at some places. I will update it as per feedback I receive. Let us begin.
 
-###How to go about setting up things and doing things?
+### How to go about setting up things and doing things?
 
 This tutorial is for linux or linux like machines. I use `python2.7` throughout the code.
 
@@ -57,7 +57,6 @@ INSERT INTO boards (board, display_name) VALUES ('board2', 'Board 2');
 Now, database work is done (the basic parts at least). Now, we need to set up `virtualenv` inside `/venv/` directory. 
 `cd` into `/venv/` directory in Simplechan repository. 
 Type this command below to set up `virtualenv` with `python` version 2.7
-
 ```
 $virtualenv --python=/path/to/python2.7 .
 ```
@@ -65,7 +64,6 @@ Now, activate the `virtualenv` by typing
 ```
 $source bin/activate
 ```
-
 A `(venv)` prefix should appear in your command line. This means the python virtual environment is active now. Any result of `python` commands will use this folder as a base folder. So, we install the required python libraries required to run this chan by typing
 ```
 $pip install -r requirements.txt
@@ -81,6 +79,3 @@ Now, we `cd` into `/app/` directory and run
 $python runserver.py
 ```
 Simplechan should be running in localhost port 5000
-
-
-
