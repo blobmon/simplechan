@@ -1,0 +1,95 @@
+body {
+	color : rgb(30,30,30);
+	background-color: rgb(240,240,240);	
+}
+
+.post {
+	background-color: rgb(220,220,220);
+}
+
+.post.highlighted {
+	background-color: rgb(200,200,220)
+}
+.post.selected {
+	background-color: rgb(200,200,200)
+}
+.op_post {
+	background-color: rgb(220,240,220);	
+}
+
+.post_message.deleted {
+	color : #933;
+}
+
+.name {
+	color : rgb(245,70,70);
+}
+
+.moderator_style {
+	color : rgb(10,120,20);
+}
+
+button.small  {
+	background-color: #eeeeee;
+	color : rgb(30,30,30);
+}
+
+button:active.small {
+	background-color: #bbbbbb;
+}
+
+.post_num {
+	color : rgb(10, 120, 20);
+}
+
+.trip {
+	color : rgb(10, 120, 20);
+}
+
+.quote_txt {
+	color : rgb(10, 120, 20);
+}
+
+.quote_no {
+	color : blue;
+}
+
+a {
+	color : blue;
+}
+
+/*age */
+.age, .uid_count {
+	background-color : #323;
+	color : #fff;
+}
+
+/* popup related */
+.close, .snap {
+  color : #c11;
+}
+.good {
+	color : #2a3;
+}
+
+.bad {
+	color : #e22;
+}
+
+#popup_report_box {
+	background-color: rgb(220,220,220);
+}
+
+#popup_reply_box {
+  background-color : #ddd;  
+}
+
+
+/* media queries */
+@media only screen and (max-width: 480px) {
+	.post_info {
+		background-color: rgb(200,200,200);
+		border-bottom: 1px solid rgb(200,200,200)
+	}
+}
+

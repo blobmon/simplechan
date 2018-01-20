@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<link rel="shortcut icon" href='/static/assets/favicon.ico' />
+
+	<script type="text/javascript" src="/static/script_catalog.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/style_catalog.css">
+	<link rel="stylesheet" type="text/css" href="/static/style_light.css" id="theme_stylesheet">
+
+	<title>{{board_info.board_display_name}}</title>
+
+	<script>
+	var board_name = '{{board_info.board_name}}'
+	</script>
+</head>
+
+<body>
+	<div id='header'>
+		
+		<h1>{{board_info.board_display_name}}</h1>
+		{% if board_info.board_extra_text|length > 0 %} <div class='small'>{{board_info.board_extra_text}}</div><br> {% endif %}
+		<span>goto other board : </span>
+		<select id='board_select'>
+			<option value='board1'>board 1</option> <option value='board2'>board 2</option> <option value='board3'>board 3</option>
+		</select>
+
+		<div id='start_thread_link_container'>
+		<a id='start_thread_link' href='#'>Start Thread</a>
+		</div>
+		
+	</div>
+	
+	<form id='start_thread_form' name='start_thread_form' enctype='multipart/form-data' >		
+		<table class='post_form'>
+		<tbody>
+			<tr>
+				<td>Name</td>
+				<td>
+					<input name='name' type='text' tabindex='1' placeholder="Anonymous"/>
+				</td>
+			</tr>
+			<tr>
+				<td>Subject</td>
+				<td>
+					<input name='subject' type='text' tabindex='2'/>
+					<button type="button" onclick='on_thread_submit(this)' tabindex='5'>Post</button>
+				</td>
+			</tr>
+			<tr>
+				<td>Comment</td>
+				<td>
+					<textarea  name='text' wrap='soft' tabindex='3'></textarea>
+				</td>
+			</tr>			
+			<tr>
+				<td>Image </td>
+				<td>
+					<input type='file' name="image" tabindex='4' />
+				</td>
+			</tr>
+			<tr>
+				<td colspan='2' >
+					<div id='start_thread_status_div'>
+					&nbsp;
+					</div>
+				</td>
+			</tr>
+		</tbody>
+		</table>			
+	</form>
+
+
+
+	<hr>
+	<div id='info_box_top' class='infobox' >
+	[<a href='/'>Home</a>]
+	[<a href='#bottom' id='top'>Bottom</a>]	
+
+	<div class='infobox_sort' >
+		Sort by : 
+		<select id='select_sort_method'>
+			<option value='bump_order'>Bump Order</option>
+			<option value='reply_count'>Reply Count</option>
+			<option value='creation_date'>Creation Date</option>
+		</select>
+	</div>
+	</div>
+	<hr>
+
+
+	<div id='div_list'>
+		{% for b in div_list %}
+		<div class='post_container' data-ts = '{{b.ts}}' data-bump_ts = '{{b.bump_ts}}' data-reply_count= '{{b.reply_count}}' > 
+			<a href='{{b.href}}'><img src='/static/images/{{b.savename}}_s.jpg' alt='{{b.filesize}}' class='thread_img'/></a> 
+			<div class='small'><strong>R : {{b.reply_count}}</strong>{{b.thread_extra_status | safe}}</div>
+			<div ><span><strong>{{b.title}}</strong> {{b.text}}</span></div> 			
+		</div>
+		{% endfor %}
+		{% if div_list|length == 0 %}
+			<strong>No Threads yet.</strong>
+		{% endif %}
+
+	</div>
+
+
+	<hr>
+	<div id='info_box_bottom' class='infobox' >
+	[<a href='/'>Home</a>]
+	[<a href='#top' id='bottom'>Top</a>]		
+	</div>
+	<hr>
+
+	<div id='bottom_options'>
+	<span>Theme : </span>
+	<select id='theme_select'>
+		<option value='light'>Light</option>
+		<option value='dark'>Dark</option>
+	</select>
+	</div>
+
+{% include 'footer.html' without context %}
+
+</body>
+
+</html>

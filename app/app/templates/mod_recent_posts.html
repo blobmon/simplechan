@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset='utf-8'/>
+<meta name='viewport' content='initial-scale=1'/>
+<title>recent posts</title>
+<style type='text/css'>
+body { font-family : monospace; color:rgb(30,30,30); font-size:12px; background-color:rgb(240,240,240); }
+body { max-width : 800px; margin : 0 auto; }
+
+.post_container {background-color: rgb(230,230,230); display: inline-block; min-width:300px; margin:3px;}
+.op_post {background-color: rgb(220,240,220);}
+.post_img {float : left; margin-right : 10px;}
+.post_text {margin-left: 3px;}
+.post_deleted {color : red;}
+.poster_name {font-weight: bold; color:rgb(245,75,70);}
+</style>
+
+
+
+</head>
+
+<body>
+
+<h3>Recent Posts : </h3>
+
+{{navigation|safe}}
+<br><br>
+
+<div id='all_posts'>
+	{% for post_container in posts %}
+	<div class=''>{{post_container|safe}}</div>
+	{% endfor %}
+</div>
+
+<br>
+{{navigation|safe}}
+
+</body>
+
+</html>

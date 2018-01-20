@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<link rel="shortcut icon" href='/static/assets/favicon.ico' />
+
+	<link rel="stylesheet" type="text/css" href="/static/style_post.css">
+	<link rel="stylesheet" type="text/css" href="/static/style_light.css" id="theme_stylesheet">
+
+
+	<script  type="text/javascript" src="/static/script_post.js"></script>
+	<script type="text/javascript">
+		var board_name = '{{board_info.board_name}}'
+		var you_list = {{you_list}}
+		var thread_id = {{board_info.thread_id}}
+		var thread_locked = {{board_info.thread_locked}}
+	</script>
+
+
+	<title>{{board_info.page_title|safe}}</title>
+
+</head>
+
+<body>
+	<div class='popup_hidden' id='popup_generic'></div>
+	
+	<table class='popup_hidden' id='popup_report_box'>
+	<form name='report_form' >
+	<tbody>
+		<tr>
+			<td colspan='2' align='right'><span class='close'>close(x)</span></td>
+		</tr>
+		<tr>
+			<td id='report_popup_header' >report post :</td>
+		</tr>
+		<tr id='report_form_reason_tr'>
+			<td colspan='2'>
+			<label>reason :</label><br>
+			<input type="radio" name="reason" value="spam"> spam / off-topic<br>
+			<input type="radio" name="reason" value="illegal"> illegal / improper content<br>
+			</td>
+		</tr>
+		<tr>
+			<td colspan='2' align='center'>
+			<button  id='report_button_send' class='button_send' type='button' >submit</button>
+			</td>
+		</tr>
+		<tr>
+			<td colspan='2' id='report_status_text'>
+				Error : you have already reported this post			
+			</td>
+		</tr>
+	</tbody>
+	</form>
+	</table>
+
+	<table class='popup_hidden' id='popup_reply_box'>
+	<form name='reply_form'>
+	<tbody>
+		<tr>
+		<td colspan='2' align='right' ><span class='snap'>snap(↑)</span> | <span class='close'>close(x)</span></td>
+		</tr>    
+		<tr>
+		<td colspan='2'>          
+		  <input name='name' type='text' tabindex='1' placeholder="Name" id='reply_input_name' /><br>
+		  <textarea name='text' placeholder="Comment" wrap='soft' tabindex='2' id='reply_input_comment' ></textarea>
+		</td>
+		</tr>
+		<tr>
+		<td>
+		 <input type='file'name="image" tabindex='3' class='small' id='reply_input_file' />
+		</td>
+		<td align='right'>		 
+		 <input id="reply_bump_checkbox" type="checkbox" name="bump" tabindex='4' value="bump" checked >
+		 <label id="reply_bump_label" for="bump" class="small">bump?</label>
+		 <button id='reply_button_send' class='button_send' type="button" tabindex='5'>submit</button>
+		</td>
+		</tr>
+		<tr>
+			<td colspan='2' id='reply_status_text'>
+				Error : you have already reported this post			
+			</td>
+		</tr>
+	</tbody>
+	</form>
+	</table>
+
+	<!-- actual displayables start here -->
+
+
+	<div id='header'>
+	<h1>{{board_info.board_display_name}}</h1>
+	<span>goto other board : </span>
+	<select id='board_select'>
+		<option value='board1'>board 1</option> <option value='board2'>board 2</option> <option value='board3'>board 3</option>
+	</select>
+	</div>
+
+	<hr>
+	<div id='info_box_top' class='infobox' >
+	[<a href='{{board_info.back_link}}'>Back</a>]
+	[<a href='#bottom' id='top'>Bottom</a>]
+	[<a href='#top' id='update_thread_top'>Update</a>]
+	<span class='small thread_status_txt'></span>
+
+	<div class='infobox_txt' >Replies : {{board_info.reply_count}} | Posters : {{board_info.posters_count}}</div>
+	</div>
+	<hr>
+	
+	<div id='posts'>
+		{% for post_container in innards %}
+		{{post_container|safe}}
+		{% endfor %}		
+	</div>
+
+
+	<div ><button id='post_reply_mob'>Post Reply</button></div>
+	<hr>
+	<div id='info_box_bottom' class='infobox' >
+	<div id='post_reply_desk'>[<a href='#bottom'>Post Reply</a>]</div>
+
+	[<a href='{{board_info.back_link}}'>Back</a>]
+	[<a href='#top' id='bottom'>Top</a>]
+	[<a href='#bottom' id='update_thread_bottom'>Update</a>]
+	<span class='small thread_status_txt'></span>
+
+	<div class='infobox_txt' >Replies : {{board_info.reply_count}} | Posters : {{board_info.posters_count}}</div>
+	</div>
+	<hr>
+
+	<div id='bottom_options'>
+	<span>Theme : </span>
+	<select id='theme_select'>
+		<option value='light'>Light</option>
+		<option value='dark'>Dark</option>
+	</select>
+	</div>
+
+{% include 'footer.html' without context %}
+
+</body>
+
+</html>

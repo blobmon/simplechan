@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset='utf-8'/>
+<meta name='viewport' content='initial-scale=1'/>
+<title>update posts</title>
+<style type='text/css'>
+body { font-family : monospace; color:rgb(30,30,30); font-size:12px; background-color:rgb(240,240,240); }
+#message { max-width:600px;  }
+.bad { color : red; }
+.good { color : green; }
+.neutral { color : rgb(30,30,30); }
+
+body { max-width : 600px; margin : 0 auto; }
+
+#loaded_post_div {padding : 3px;}
+#loaded_post { background-color : rgb(230,230,230); display:inline-block; padding : 3px ; min-width:300px;}
+
+.op_post {background-color: rgb(220,240,220);}
+.post_img {float : left; margin-right : 10px;}
+.post_text {margin-left: 3px;}
+.post_deleted {color : red;}
+.poster_name {font-weight: bold; color:rgb(245,75,70);}
+
+textarea { width:300px; height:60px;}
+
+.careful_span { color : red; }
+
+</style>
+
+<!-- the great script -->
+<script type='text/javascript'>
+
+
+function init() {
+	var load_post_button = document.getElementById('button_load_post')
+	load_post_button.addEventListener('click', onLoadPostClick, false)
+
+	var delete_post_button = document.getElementById('button_delete_post')
+	delete_post_button.addEventListener('click', onDeleteClick, false)
+
+	var update_thread_button = document.getElementById('button_update_thread')
+	update_thread_button.addEventListener('click', onUpdateThreadClick, false)
+
+	var move_thread_button = document.getElementById('button_move_thread')
+	move_thread_button.addEventListener('click', onMoveThreadClick, false)
+
+
+	var undelete_post_button = document.getElementById('button_undelete_post')
+	undelete_post_button.addEventListener('click', onUndeletClick, false)
+
+
+	document.forms.form_delete_post.style.display = 'none'
+	document.forms.form_undelete_post.style.display = 'none'	
+	document.forms.form_update_thread.style.display = 'none'
+	document.forms.form_move_thread.style.display = 'none'
+
+}
+
+function onUpdateThreadClick() {
+
+	var form_element = document.forms.form_update_thread
+	var form_data = new FormData()
+	var eee = form_element.elements
+
+	var pin = eee.pin.checked ? 1 : 0
+	var lock = eee.lock.checked ? 1 : 0
+
+	var updatable = false
+
+	if (window.loaded_post_data.pin !== pin ) {				
+		updatable = true
+	}
+	if (window.loaded_post_data.lock !== lock) {		
+		updatable = true
+	}
+
+	if (updatable === false) {
+		set_status('nothing to update', 'bad')
+		return
+	}
+
+	if (confirm("You sure about updating the thread?") == false) {
+		return
+	}
+
+	form_data.append('update_thread', 'please')
+	form_data.append('thread_id', window.loaded_post_data.post_id)
+	form_data.append('lock', lock)
+	form_data.append('pin', pin)
+
+	set_status('processing update thread request...', 'neutral')
+
+	var on_ok = function(d) {
+		var data = JSON.parse(d)
+		set_status('thread No.' + data.thread_id + ' updated', 'good')
+	}
+	var on_fail = function(status, d) {
+		if (status == 500 ) {
+			set_status('server error while trying to update thread', 'bad')
+		}
+		else if (status == 400 || status == 404) {
+			set_status('Error : ' + d , 'bad' )
+			alert('Error : ' + d)
+		}
+		else {
+			set_status('Error', 'bad')
+		}
+	}
+
+	send_form(form_data, '/mod_update_post/', on_ok, null, on_fail)
+}
+
+function onMoveThreadClick() {
+
+	var form_element = document.forms.form_move_thread
+	var form_data = new FormData()
+	var eee = form_element.elements
+
+	var board_dst = eee.board_dst.value.trim()
+
+	if (board_dst.length == 0) {
+		set_status('please insert board destination', 'bad')
+		return
+	}
+
+	if (confirm("You sure about moving the thread?") == false) {
+		return
+	}
+
+	form_data.append('move_thread', 'please')
+	form_data.append('thread_id', window.loaded_post_data.post_id)
+	form_data.append('board_dst', board_dst)
+
+	set_status('processing move thread request...', 'neutral')
+
+	var on_ok = function(d) {
+		var data = JSON.parse(d)
+		set_status('thread No.' + data.thread_id + ' moved', 'good')
+	}
+	var on_fail = function(status, d) {
+		if (status == 500 ) {
+			set_status('server error while trying to move thread', 'bad')
+		}
+		else if (status == 400 || status == 404) {
+			set_status('Error : ' + d , 'bad' )
+			alert('Error : ' + d)
+		}
+		else {
+			set_status('Error', 'bad')
+		}
+	}
+
+	send_form(form_data, '/mod_update_post/', on_ok, null, on_fail)
+}
+
+
+
+function onUndeletClick() {
+	if (confirm("You sure about un-deleting this post?") == false) {
+		return
+	}
+	var form_element = document.forms.form_undelete_post
+	var form_data = new FormData()
+	var eee = form_element.elements
+
+	var undelete_subsequent = eee.undelete_subsequent.checked ? 1 : 0
+	var unban = eee.unban.checked ? 1 : 0
+
+	form_data.append('undelete_post', 'please')
+	form_data.append('post_id', window.loaded_post_data.post_id )
+	form_data.append('undelete_subsequent', undelete_subsequent)
+	form_data.append('unban', unban)
+
+	set_status('processing un-delete request...', 'neutral')
+
+	var on_ok = function(d) {
+		var data = JSON.parse(d)
+		set_status('post No.' + data.post_id + ' un-deleted', 'good')
+	}
+	var on_fail = function(status, d) {
+		if (status == 500 ) {
+			set_status('server error while trying to delete post', 'bad')
+		}
+		else if (status == 400 || status == 404) {
+			set_status('Error : ' + d , 'bad' )
+			alert('Error : ' + d)
+		}
+		else {
+			set_status('Error', 'bad')
+		}
+	}
+
+	send_form(form_data, '/mod_update_post/', on_ok, null, on_fail)
+
+
+}
+
+function onDeleteClick() {
+	if (confirm("You sure you want to delete this post?") == false) {
+		return
+	}
+	var form_element = document.forms.form_delete_post
+	var form_data = new FormData()
+	var eee = form_element.elements
+
+	var delete_reason = eee.reason.value
+	if (delete_reason == null || delete_reason.length == 0 ) {
+		set_status('please select reason', 'bad')
+		return
+	}
+
+	var delete_subsequent = eee.delete_subsequent.checked ? 1 : 0
+	var unbump = eee.unbump.checked ? 1 : 0
+	var delete_permanently = eee.delete_permanently.checked ? 1 : 0
+	
+	var ban_duration = eee.duration.value
+	if (ban_duration == null || ban_duration.length == 0 ) {
+		ban_duration = 0
+	}
+	if (ban_duration > 400) {
+		set_status('let the ban duration be within 400 hours', 'bad')
+		return
+	}
+
+	var delete_reason_text = eee.delete_reason_text.value
+	if (delete_reason_text == null || delete_reason_text.length < 4) {
+		set_status('delete reason should be atleast 4 characters long', 'bad')
+		return
+	}
+	else if(delete_reason_text.length > 400 ) {
+		set_status('delete reason too long', 'bad')
+		return
+	}
+
+	form_data.append('delete_post', 'please')
+	form_data.append('post_id', window.loaded_post_data.post_id )
+	form_data.append('reason', delete_reason)
+
+	form_data.append('delete_subsequent', delete_subsequent)
+	form_data.append('unbump', unbump)
+	form_data.append('delete_permanently', delete_permanently)
+
+	form_data.append('duration', ban_duration)
+	form_data.append('delete_reason_text', delete_reason_text)
+
+	set_status('processing delete request...', 'neutral')
+
+	var on_ok = function(d) {
+		var data = JSON.parse(d)
+		set_status('post No.' + data.post_id + ' deleted', 'good')
+	}
+	var on_fail = function(status, d) {
+		if (status == 500 ) {
+			set_status('server error while trying to delete post', 'bad')
+		}
+		else if (status == 400 || status == 404) {
+			set_status('Error : ' + d , 'bad' )
+			alert('Error : ' + d)
+		}
+		else {
+			set_status('Error', 'bad')
+		}
+	}
+
+	send_form(form_data, '/mod_update_post/', on_ok, null, on_fail)
+}
+
+function onLoadPostClick() {
+	var clicked_button = document.getElementById('button_load_post')
+	var form_element = document.forms.form_load_post
+	var form_data = new FormData()
+
+	var eee = form_element.elements
+	
+	var post_id_value = eee.post_id.value
+	if (post_id_value == null || post_id_value.length == 0)
+	{
+		set_status('post id not entered', 'bad')
+		return
+	}
+
+	var post_id = parseInt(eee.post_id.value)
+
+	form_data.append('load_post', 'please')
+	form_data.append('post_id', post_id)
+
+	clicked_button.disabled = true
+	
+	set_status('loading post...', 'neutral')
+
+	var on_ok = function(d) {
+		
+		/*
+		remove all values from the form element
+		display : block the div
+		add the html to the relevant sub div
+		add the post_id to relevant <span>
+		status set
+		*/
+		var data = JSON.parse(d)
+
+		// clearing the forms
+		document.forms.form_delete_post.reset()
+		document.forms.form_undelete_post.reset()
+		document.forms.form_update_thread.reset()
+		document.forms.form_move_thread.reset()
+		document.forms.form_undelete_post.style.display = 'none'
+		document.forms.form_delete_post.style.display = 'none'
+		document.forms.form_update_thread.style.display = 'none'
+		document.forms.form_move_thread.style.display = 'none'
+
+		window.loaded_post_data = data
+		
+		loaded_post = document.getElementById('loaded_post')
+		loaded_post.innerHTML = data.html
+
+		
+		if (data.delete_status == 0) {
+			document.forms.form_delete_post.style.display = 'block'
+			
+			if (data.post_id === data.thread_id) {
+				document.forms.form_update_thread.style.display = 'block'
+				document.forms.form_move_thread.style.display = 'block'
+
+				var form_update_thread = document.forms.form_update_thread			
+				var eee = form_update_thread.elements
+
+				if (data.pin === 1) {
+					eee.pin.checked = true
+				}
+				if (data.lock === 1) {
+					eee.lock.checked = true
+				}
+
+			}
+		}
+		else {
+			document.forms.form_undelete_post.style.display = 'block'
+		}
+
+		set_status('post No.' + data.post_id + ' loaded', 'good')
+		
+		clicked_button.disabled = false
+	}
+
+	var on_fail = function(status, d) {
+		if (status == 500 ) {
+			set_status('server error while loading post', 'bad')
+		}
+		else if (status == 400 || status == 404) {
+			set_status('Error : ' + d , 'bad' )
+			alert('Error : ' + d)
+		}
+		else {
+			set_status('Error', 'bad')
+		}
+		clicked_button.disabled = false
+	}
+
+	send_form(form_data, '/mod_update_post/', on_ok, null, on_fail)
+
+}
+
+document.addEventListener("DOMContentLoaded", init);
+
+function set_status(msg, class_name) {	
+	var status_txt = document.getElementById('status_text')
+	status_txt.innerHTML = msg
+	status_txt.className = class_name
+}
+
+// util functions
+function send_form(form_data, endpoint, on_ok, on_progress, on_fail) {
+	var xhr = new XMLHttpRequest();
+	if(on_progress != null) { xhr.upload.addEventListener('progress', on_progress) }
+	
+	xhr.open('POST', endpoint );
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState === 4 ) {
+			if(xhr.status == 200 ) {
+				on_ok(xhr.responseText);
+			}
+			else {				
+				console.log('failed with status : ' + xhr.status + ' and readyState : ' + xhr.readyState);
+				on_fail(xhr.status, xhr.responseText)
+			}
+		}
+	}
+
+	xhr.send(form_data);
+}
+
+
+// trim polyfill
+if (!String.prototype.trim) {
+  String.prototype.trim = function () {
+    return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+  };
+}
+
+</script>
+
+
+
+</head>
+
+<body>
+<div id='message'>
+	<ul>
+	<h3>Moderator {{mod_username}}! Yes you! read this once in a while... </h3>
+	<li>Do not delete a post unless absolutely necessary</li>
+	<li>Make sure to see <a href='/mod_report_list/' target='_blank'>report list</a> to be clear</li>
+	<li>Do not ban the poster unless absolutely necessary</li>
+	<li>Make sure your ego and personal beliefs doesn't interfere with the decision</li>	
+	</ul>
+</div>
+
+<div class='work_area'>
+<div id='load_post'>
+	<label>Load Post : </label> 
+	<form name='form_load_post' onsubmit="event.preventDefault();" >
+	<input name='post_id' type='number' min='100' max='100000000000' id='input_load_post_id'>
+	<button id='button_load_post' type='button'>load</button>
+	</form>
+</div>
+<br>
+
+<div id='loaded_post_div'>	
+	<div id='loaded_post'></div>
+	<br><br>
+
+	<form name='form_delete_post'>	
+	<strong>DELETE POST?</strong><br>
+	<label>Delete reason : </label><br>
+	<input type="radio" name="reason" value="spam"> spam / flooding<br>
+	<input type="radio" name="reason" value="illegal"> illegal / improper content<br><br>
+
+	<input type="checkbox" name="delete_subsequent" value="delete_subsequent"> 
+	<label> delete subsequent posts by this user ITT? <span class="careful_span">(careful)</span></label><br><br>
+
+	<input type="checkbox" name="unbump" value="unbump">
+	<label> unbump thread? <span class="careful_span">(careful)</span></label><br><br>
+
+	<input type="checkbox" name="delete_permanently" value="delete_permanently">
+	<label> hard delete? <span class="careful_span">(careful)</span></label><br><br>
+	
+	<label>Ban duration (optional) :</label>
+	<input type='number' name='duration' min='0' max='400'> hours<br><br>
+
+	<label>Delete Reason Text (needed) : </label><br>
+	<textarea placeholder="Delete reason" wrap='soft' name='delete_reason_text' ></textarea><br><br>
+	<button id='button_delete_post' type='button'>DELETE THIS</button>
+	</form>	
+
+	<br>
+	<div id='status_text'></div>
+	<br>
+
+	<form name='form_update_thread'>	
+	<strong>UPDATE THREAD? </strong><br>
+	<input type="checkbox" name="pin" value="pin"> 
+	<label> pin? </label><br>
+
+	<input type="checkbox" name="lock" value="lock">
+	<label> lock? </span></label><br><br>
+
+	<button id='button_update_thread' type='button'>UPDATE THREAD</button>
+	</form>	
+
+	<br>
+	<form name='form_move_thread'>	
+	<strong>MOVE THREAD? </strong><br>	
+	<input name='board_dst' type='text' placeholder="board_dst" /> <br><br>
+	<button id='button_move_thread' type='button'>MOVE THREAD</button>
+	</form>	
+
+
+	<form name='form_undelete_post'>	
+	<strong>UN-DELETE POST?</strong><br>
+	<input type="checkbox" name="undelete_subsequent" value="undelete_subsequent"> 
+	<label> un-delete subsequent posts by this user in this thread? </label><br><br>
+
+	<input type="checkbox" name="unban" value="unban">
+	<label> unban poster? <span class="careful_span">(careful)</span></label><br><br>
+
+	<button id='button_undelete_post' type='button'>UN-DELETE THIS</button>
+	</form>	
+</div>
+
+</div>
+
+
+
+<br><br>
+<a href='/mod_lounge'>moderator lounge</a>
+</body>
+</html>

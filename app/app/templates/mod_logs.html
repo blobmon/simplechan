@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset='utf-8'/>
+<meta name='viewport' content='initial-scale=1'/>
+<title>Moderation Log | simplechan</title>
+<style type='text/css'>
+body { font-family : monospace; color:rgb(30,30,30); font-size:12px; background-color:rgb(240,240,240); }
+body { max-width : 800px; margin : 0 auto; }
+h3 {line-height: 50%}
+.log {background-color: rgb(230,230,230); margin : 5px; padding:2px;}
+.action {color:green;}
+</style>
+
+
+
+</head>
+
+<body>
+
+<h3>Moderation Log : </h3>
+
+{% if log_id_mode is defined %}	
+	<a href='/'>home</a> | <a href='/mod_logs'>all logs</a><br><br>
+	<div id='all_posts'>	
+		<div class='log'> 
+			{{log|safe}}
+		</div>
+	</div>
+	<br>
+{% else %}	
+	<a href='/'>home</a><br><br>
+	{{navigation|safe}}<br>	
+	<div id='all_posts'>
+		{% for log in logs %}
+		<div class='log'>
+			{{log|safe}}
+		</div>
+		{% endfor %}
+	</div>
+	<br>
+	{{navigation|safe}}<br><br>
+	<a href='/'>home</a>
+{% endif %}
+
+</body>
+
+</html>

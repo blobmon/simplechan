@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name='viewport' content='width=device-width, initial-scale=1'>	
+	<title>simplechan</title>
+	<link rel="shortcut icon" href='/static/assets/favicon.ico' />
+
+	<style type='text/css'>
+		body {font-family : arial,helvetica,sans-serif;	color : rgb(30,30,30);	font-size: 14px;background-color: rgb(240,240,240);	}
+		h1 { font-size: 26px; text-align: center; }
+		h3 { font-size: 16px; margin : 3px;  }
+		#banner_div { text-align : center; }
+		#what_is { max-width : 600px; background-color: #fff; border : 1px solid #444; padding : 10px; margin: auto; }
+		#board_select {	max-width: 700px; background-color: #fff; border : 1px solid #444; padding : 10px; margin : auto; margin-top: 20px;	text-align: center; line-height: 200%; }
+		#board_select_inner a {	margin-left : 5px;	margin-right: 5px; }
+		#footer { padding-top : 30px; margin: auto; margin-top : 20px; border-top : 1px solid #aaa; text-align:center; font-size:10px; }
+		.new { font-size : 10px; color : #e88; }
+	</style>
+</head>
+
+<body>
+<div id='about'>
+	<div id='banner_div'>
+		<img src='/static/assets/simplechan_banner.png' alt='simplechan banner'>
+	</div>
+	<h1>Welcome to Simplechan.</h1>
+	<div id='what_is'>
+		<p>
+		Simplechan is a simple image-based bulletin board software. You do not need to register an account for posting. Please edit this page as per your liking.
+		</p>
+		<p>
+		See <a href='/rules_and_faq/'>rules and faq</a> to learn more about using this site. And yes, this site is inspired by 4chan :)
+		</p>
+	</div>
+</div>
+
+<div id='board_select'>
+	<h3>boards : </h3>
+	<div id='board_select_inner'>	
+		<a href='/boards/board1/'>board 1</a> <a href='/boards/board2/'>board 2</a> <a href='/boards/board3/'>board 3</a>
+	</div>
+</div>
+
+{% include 'footer.html' without context %}
+
+</body>
+
+</html>
